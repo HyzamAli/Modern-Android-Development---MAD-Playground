@@ -17,4 +17,7 @@ interface PersonRemoteKeysDao {
 
     @Query("DELETE FROM PersonRemoteKeys")
     suspend fun clearRemoteKeys()
+
+    @Query("SELECT last_updated FROM PersonRemoteKeys LIMIT 1")
+    suspend fun getLastUpdated(): Long?
 }

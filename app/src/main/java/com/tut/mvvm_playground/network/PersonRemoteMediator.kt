@@ -9,6 +9,8 @@ import com.tut.mvvm_playground.models.PersonRemoteKeys
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +24,17 @@ class PersonRemoteMediator @Inject constructor(
     private val remoteKeyId = 1
 
     override suspend fun initialize(): InitializeAction {
+        val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+        val lastFetchedTime = db.PersonRemoteKeysDao().getLastUpdated()
+        lastFetchedTime?.let {
+
+            //Caching logic to check if list was fetched recently
+            if (System.currentTimeMillis() - lastFetchedTime <= cacheTimeout) {
+                Log.d("PersonRemoteMediator", "initialize: Fetching from cache")
+                return InitializeAction.SKIP_INITIAL_REFRESH
+            }
+        }
+        Log.d("PersonRemoteMediator", "initialize: Fetching from network")
         return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
@@ -71,7 +84,7 @@ class PersonRemoteMediator @Inject constructor(
                     else page+1
                 }
                 db.PersonRemoteKeysDao().insert(
-                    PersonRemoteKeys(remoteKeyId, nextKey)
+                    PersonRemoteKeys(remoteKeyId, nextKey, Calendar.getInstance().timeInMillis)
                 )
                 db.PersonDao().insert(response.body()!!)
             }
