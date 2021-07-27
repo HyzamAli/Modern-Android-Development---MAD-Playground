@@ -9,14 +9,17 @@ import com.tut.mvvm_playground.models.PersonRemoteKeys
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 @OptIn(ExperimentalPagingApi::class)
-class PersonRemoteMediator(
+@Singleton
+class PersonRemoteMediator @Inject constructor(
     private val db: AppDatabase,
-    private val api: PersonApi,
-    private val query: Int
+    private val api: PersonApi
 ) : RemoteMediator<Int, Person>() {
+    private val remoteKeyId = 1
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -41,7 +44,9 @@ class PersonRemoteMediator(
                 LoadType.APPEND -> {
                     // Gets the info regarding the next page to be fetched for a given query id
                     // from the PersonRemoteKeys table
-                    val remoteKey = db.withTransaction { db.PersonRemoteKeysDao().findById(query) }
+                    val remoteKey = db.withTransaction {
+                        db.PersonRemoteKeysDao().findById(remoteKeyId)
+                    }
                     if (remoteKey.nextKey == null) {
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
@@ -66,7 +71,7 @@ class PersonRemoteMediator(
                     else page+1
                 }
                 db.PersonRemoteKeysDao().insert(
-                    PersonRemoteKeys(query, nextKey)
+                    PersonRemoteKeys(remoteKeyId, nextKey)
                 )
                 db.PersonDao().insert(response.body()!!)
             }

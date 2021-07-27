@@ -10,8 +10,6 @@ import com.tut.mvvm_playground.network.PersonRemoteMediator
 import javax.inject.Inject
 import javax.inject.Singleton
 
-const val QUERY_GET_ALL_USERS = 1
-
 @Singleton
 class MainRepository @Inject constructor (
     private val db: AppDatabase,
@@ -21,7 +19,7 @@ class MainRepository @Inject constructor (
     @ExperimentalPagingApi
     fun getPersons() = Pager(
     config = PagingConfig(PAGE_SIZE, enablePlaceholders = true),
-    remoteMediator = PersonRemoteMediator(db, personApi, QUERY_GET_ALL_USERS)
+    remoteMediator = PersonRemoteMediator(db, personApi)
     ) {
         db.PersonDao().getAll()
     }
