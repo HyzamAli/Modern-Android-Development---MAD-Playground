@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">mvvm-playground</string>
+    <string name="user_image">User Image</string>
+</resources>
