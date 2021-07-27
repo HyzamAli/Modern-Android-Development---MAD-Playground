@@ -6,24 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
-import com.tut.mvvm_playground.data.AppDatabase
 import com.tut.mvvm_playground.databinding.FragmentMainBinding
 import com.tut.mvvm_playground.network.NetworkResponseHandler
 import com.tut.mvvm_playground.viewmodel.MainViewModel
-import com.tut.mvvm_playground.viewmodel.MainViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private lateinit var viewModelFactory: MainViewModelFactory
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: FragmentMainBinding
     private lateinit var personAdapter: PersonListAdapter
 
@@ -32,8 +30,6 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
-        viewModelFactory = MainViewModelFactory(AppDatabase.getDbInstance(requireContext()))
-        viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         return binding.root
     }
 
