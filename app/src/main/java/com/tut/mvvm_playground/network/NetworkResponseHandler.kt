@@ -15,6 +15,8 @@ object NetworkResponseHandler {
             else -> Response.Failure(ResponseCode.ERROR_UNKNOWN)
         }
 
+    // Should be called inside HttpExceptions to receive a ResponseWrapper [Failure] containing
+    // the ResponseCode
     fun <T> handleResponse(throwable: Throwable): Response.Failure<T> =
         when (throwable) {
             is IOException -> Response.Failure(ResponseCode.NO_INTERNET)

@@ -34,6 +34,10 @@ data class Person(
  * This is a helper entity to track the next page numbers for different queries associated
  * with the Person remote object
  *
+ * @param id represents the queryId
+ * @param nextKey represents the next page number to be fetched, NOTE - Null indicates end of list
+ * @param lastUpdated represents the last time the page was fetched for
+ *
  * Eg: Row with id = 1, represents page data currently available related to a query to fetch
  * all user data
  */
@@ -46,4 +50,7 @@ data class PersonRemoteKeys(
 
     @ColumnInfo(name = "next_key")
     val nextKey: Int?,
+
+    @ColumnInfo(name = "last_updated")
+    val lastUpdated: Long?
 )
